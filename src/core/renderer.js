@@ -2,6 +2,7 @@
  * 排版渲染引擎
  * 用于将HTML内容按照不同主题进行渲染
  */
+import logger from '../utils/logger';
 
 // 主题配置
 const themes = {
@@ -73,9 +74,11 @@ const themes = {
  * @returns {string} 主题CSS
  */
 export function generateThemeCSS(themeName = 'default') {
+  logger.debug(`开始生成主题CSS: ${themeName}`);
+  
   const theme = themes[themeName] || themes.default;
   
-  return `
+  const css = `
     .markdown-body {
       font-family: ${theme.fontFamily};
       font-size: ${theme.fontSize};
@@ -208,6 +211,9 @@ export function generateThemeCSS(themeName = 'default') {
       margin: 1em 0;
     }
   `;
+  
+  logger.debug(`主题CSS生成完成: ${themeName}`, { cssLength: css.length });
+  return css;
 }
 
 /**
@@ -215,6 +221,7 @@ export function generateThemeCSS(themeName = 'default') {
  * @returns {Array} 主题名称数组
  */
 export function getAvailableThemes() {
+  logger.debug('获取可用主题列表');
   return Object.keys(themes);
 }
 
@@ -225,16 +232,29 @@ export function getAvailableThemes() {
  * @returns {string} 应用主题后的HTML
  */
 export function applyTheme(html, themeName = 'default') {
-  const themeCSS = generateThemeCSS(themeName);
+  if (!html) return '';
   
-  return `
-    <style>
-      ${themeCSS}
-    </style>
-    <div class="markdown-body">
-      ${html}
-    </div>
-  `;
+  logger.info(`开始应用主题: ${themeName}`, { htmlLength: html.length });
+  
+  try {
+    const themeCSS = generateThemeCSS(themeName);
+    const styledHTML = `
+      <style>${themeCSS}</style>
+      <div class="markdown-body theme-${themeName}">
+        ${html}
+      </div>
+    `;
+    
+    logger.info(`主题应用完成: ${themeName}`, { 
+      inputLength: html.length, 
+      outputLength: styledHTML.length 
+    });
+    
+    return styledHTML;
+  } catch (error) {
+    logger.error(`应用主题失败: ${themeName}`, error);
+    return html;
+  }
 }
 
 export default {

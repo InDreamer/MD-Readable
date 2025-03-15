@@ -2,6 +2,7 @@
  * 文本净化处理器
  * 用于去除Markdown标记和提取样式信息
  */
+import logger from '../utils/logger';
 
 /**
  * 去除Markdown标记，返回纯文本
@@ -10,6 +11,8 @@
  */
 export function stripMarkdown(markdown) {
   if (!markdown) return '';
+  
+  logger.debug('开始去除Markdown标记', { inputLength: markdown.length });
   
   let text = markdown;
   
@@ -59,6 +62,12 @@ export function stripMarkdown(markdown) {
   // 移除多余空行
   text = text.replace(/\n{3,}/g, '\n\n');
   
+  logger.debug('Markdown标记去除完成', { 
+    inputLength: markdown.length, 
+    outputLength: text.length,
+    reductionPercent: Math.round((markdown.length - text.length) / markdown.length * 100) + '%'
+  });
+  
   return text.trim();
 }
 
@@ -70,6 +79,8 @@ export function stripMarkdown(markdown) {
 export function extractStyles(markdown) {
   if (!markdown) return {};
   
+  logger.debug('开始提取Markdown样式信息');
+  
   const styles = {
     headings: [],
     emphasis: [],
@@ -78,99 +89,117 @@ export function extractStyles(markdown) {
     codeBlocks: [],
     lists: [],
     tables: [],
-    mathExpressions: []
+    mathExpressions: [],
+    inlineCode: [],
+    lists: {
+      ordered: [],
+      unordered: []
+    },
+    blockquotes: []
   };
   
-  // 提取标题
-  const headingRegex = /^(#{1,6})\s+(.+)$/gm;
-  let headingMatch;
-  while ((headingMatch = headingRegex.exec(markdown)) !== null) {
-    styles.headings.push({
-      level: headingMatch[1].length,
-      text: headingMatch[2].trim(),
-      position: headingMatch.index
-    });
-  }
-  
-  // 提取强调文本
-  const boldRegex = /(\*\*|__)(.*?)\1/g;
-  let boldMatch;
-  while ((boldMatch = boldRegex.exec(markdown)) !== null) {
-    styles.emphasis.push({
-      type: 'bold',
-      text: boldMatch[2],
-      position: boldMatch.index
-    });
-  }
-  
-  const italicRegex = /(\*|_)(.*?)\1/g;
-  let italicMatch;
-  while ((italicMatch = italicRegex.exec(markdown)) !== null) {
-    // 排除已经匹配为粗体的内容
-    if (!markdown.substring(italicMatch.index - 1, italicMatch.index + 1).match(/\*\*/)) {
-      styles.emphasis.push({
-        type: 'italic',
-        text: italicMatch[2],
-        position: italicMatch.index
+  try {
+    // 提取标题
+    const headingRegex = /^(#{1,6})\s+(.+)$/gm;
+    let headingMatch;
+    while ((headingMatch = headingRegex.exec(markdown)) !== null) {
+      styles.headings.push({
+        level: headingMatch[1].length,
+        text: headingMatch[2].trim(),
+        position: headingMatch.index
       });
     }
-  }
-  
-  // 提取链接
-  const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
-  let linkMatch;
-  while ((linkMatch = linkRegex.exec(markdown)) !== null) {
-    styles.links.push({
-      text: linkMatch[1],
-      url: linkMatch[2],
-      position: linkMatch.index
+    
+    // 提取强调文本
+    const boldRegex = /(\*\*|__)(.*?)\1/g;
+    let boldMatch;
+    while ((boldMatch = boldRegex.exec(markdown)) !== null) {
+      styles.emphasis.push({
+        type: 'bold',
+        text: boldMatch[2],
+        position: boldMatch.index
+      });
+    }
+    
+    const italicRegex = /(\*|_)(.*?)\1/g;
+    let italicMatch;
+    while ((italicMatch = italicRegex.exec(markdown)) !== null) {
+      // 排除已经匹配为粗体的内容
+      if (!markdown.substring(italicMatch.index - 1, italicMatch.index + 1).match(/\*\*/)) {
+        styles.emphasis.push({
+          type: 'italic',
+          text: italicMatch[2],
+          position: italicMatch.index
+        });
+      }
+    }
+    
+    // 提取链接
+    const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+    let linkMatch;
+    while ((linkMatch = linkRegex.exec(markdown)) !== null) {
+      styles.links.push({
+        text: linkMatch[1],
+        url: linkMatch[2],
+        position: linkMatch.index
+      });
+    }
+    
+    // 提取图片
+    const imageRegex = /!\[([^\]]*)\]\(([^)]+)\)/g;
+    let imageMatch;
+    while ((imageMatch = imageRegex.exec(markdown)) !== null) {
+      styles.images.push({
+        alt: imageMatch[1],
+        url: imageMatch[2],
+        position: imageMatch.index
+      });
+    }
+    
+    // 提取代码块
+    const codeBlockRegex = /```(\w*)\n([\s\S]*?)```/g;
+    let codeBlockMatch;
+    while ((codeBlockMatch = codeBlockRegex.exec(markdown)) !== null) {
+      styles.codeBlocks.push({
+        language: codeBlockMatch[1],
+        code: codeBlockMatch[2],
+        position: codeBlockMatch.index
+      });
+    }
+    
+    // 提取数学公式
+    const mathBlockRegex = /\$\$([\s\S]*?)\$\$/g;
+    let mathBlockMatch;
+    while ((mathBlockMatch = mathBlockRegex.exec(markdown)) !== null) {
+      styles.mathExpressions.push({
+        type: 'block',
+        formula: mathBlockMatch[1],
+        position: mathBlockMatch.index
+      });
+    }
+    
+    const mathInlineRegex = /\$([^$\n]+)\$/g;
+    let mathInlineMatch;
+    while ((mathInlineMatch = mathInlineRegex.exec(markdown)) !== null) {
+      styles.mathExpressions.push({
+        type: 'inline',
+        formula: mathInlineMatch[1],
+        position: mathInlineMatch.index
+      });
+    }
+    
+    logger.debug('样式信息提取完成', { 
+      headings: styles.headings.length,
+      links: styles.links.length,
+      images: styles.images.length,
+      codeBlocks: styles.codeBlocks.length
     });
+    
+    return styles;
+  } catch (error) {
+    logger.error('提取样式信息失败:', error);
+    return styles;
   }
-  
-  // 提取图片
-  const imageRegex = /!\[([^\]]*)\]\(([^)]+)\)/g;
-  let imageMatch;
-  while ((imageMatch = imageRegex.exec(markdown)) !== null) {
-    styles.images.push({
-      alt: imageMatch[1],
-      url: imageMatch[2],
-      position: imageMatch.index
-    });
-  }
-  
-  // 提取代码块
-  const codeBlockRegex = /```(\w*)\n([\s\S]*?)```/g;
-  let codeBlockMatch;
-  while ((codeBlockMatch = codeBlockRegex.exec(markdown)) !== null) {
-    styles.codeBlocks.push({
-      language: codeBlockMatch[1],
-      code: codeBlockMatch[2],
-      position: codeBlockMatch.index
-    });
-  }
-  
-  // 提取数学公式
-  const mathBlockRegex = /\$\$([\s\S]*?)\$\$/g;
-  let mathBlockMatch;
-  while ((mathBlockMatch = mathBlockRegex.exec(markdown)) !== null) {
-    styles.mathExpressions.push({
-      type: 'block',
-      formula: mathBlockMatch[1],
-      position: mathBlockMatch.index
-    });
-  }
-  
-  const mathInlineRegex = /\$([^$\n]+)\$/g;
-  let mathInlineMatch;
-  while ((mathInlineMatch = mathInlineRegex.exec(markdown)) !== null) {
-    styles.mathExpressions.push({
-      type: 'inline',
-      formula: mathInlineMatch[1],
-      position: mathInlineMatch.index
-    });
-  }
-  
-  return styles;
 }
 
 export default {

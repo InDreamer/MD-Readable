@@ -4,6 +4,7 @@
  */
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
+import logger from '../utils/logger';
 
 /**
  * 导出为PNG图片
@@ -22,11 +23,24 @@ export async function exportToPNG(element, options = {}) {
   
   const mergedOptions = { ...defaultOptions, ...options };
   
+  logger.info('开始导出PNG', { 
+    elementId: element.id, 
+    width: element.offsetWidth, 
+    height: element.offsetHeight,
+    scale: mergedOptions.scale
+  });
+  
   try {
     const canvas = await html2canvas(element, mergedOptions);
-    return canvas.toDataURL('image/png');
+    const dataUrl = canvas.toDataURL('image/png');
+    logger.info('PNG导出成功', { 
+      width: canvas.width, 
+      height: canvas.height,
+      size: Math.round(dataUrl.length / 1024) + 'KB'
+    });
+    return dataUrl;
   } catch (error) {
-    console.error('导出PNG失败:', error);
+    logger.error('导出PNG失败:', error);
     throw new Error(`导出PNG失败: ${error.message}`);
   }
 }
@@ -53,6 +67,12 @@ export async function exportToPDF(element, options = {}) {
   };
   
   const mergedOptions = { ...defaultOptions, ...options };
+  
+  logger.info('开始导出PDF', { 
+    elementId: element.id, 
+    format: mergedOptions.format,
+    orientation: mergedOptions.orientation
+  });
   
   try {
     // 首先将元素渲染为Canvas
@@ -93,9 +113,14 @@ export async function exportToPDF(element, options = {}) {
     }
     
     // 返回PDF数据
+    const pdfDataUri = pdf.output('datauristring');
+    logger.info('PDF导出成功', { 
+      pages: pdf.getNumberOfPages(),
+      size: Math.round(pdfDataUri.length / 1024) + 'KB'
+    });
     return pdf.output('blob');
   } catch (error) {
-    console.error('导出PDF失败:', error);
+    logger.error('导出PDF失败:', error);
     throw new Error(`导出PDF失败: ${error.message}`);
   }
 }
@@ -109,6 +134,10 @@ export async function exportToPDF(element, options = {}) {
  * @returns {Promise<string>} 导出的SVG数据
  */
 export async function exportToSVG(element, options = {}) {
+  logger.info('开始导出SVG', { 
+    elementId: element.id
+  });
+  
   try {
     // 获取元素的HTML内容
     const htmlContent = element.outerHTML;
@@ -146,9 +175,13 @@ export async function exportToSVG(element, options = {}) {
     svgString = '<?xml version="1.0" standalone="no"?>\n' + svgString;
     
     // 返回SVG数据
-    return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgString)}`;
+    const svgData = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgString)}`;
+    logger.info('SVG导出成功', { 
+      size: Math.round(svgData.length / 1024) + 'KB'
+    });
+    return svgData;
   } catch (error) {
-    console.error('导出SVG失败:', error);
+    logger.error('导出SVG失败:', error);
     throw new Error(`导出SVG失败: ${error.message}`);
   }
 }
@@ -159,6 +192,8 @@ export async function exportToSVG(element, options = {}) {
  * @param {string} filename - 文件名
  */
 export function downloadFile(data, filename) {
+  logger.info('开始下载文件', { filename });
+  
   const link = document.createElement('a');
   
   if (data instanceof Blob) {
@@ -178,6 +213,7 @@ export function downloadFile(data, filename) {
     if (data instanceof Blob) {
       URL.revokeObjectURL(link.href);
     }
+    logger.info('文件下载成功', { filename });
   }, 100);
 }
 

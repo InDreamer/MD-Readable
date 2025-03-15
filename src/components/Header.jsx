@@ -8,8 +8,9 @@ import '../styles/Header.css';
  * @param {Function} props.onExport - 导出按钮点击回调
  * @param {Function} props.onThemeChange - 主题变更回调
  * @param {string} props.currentTheme - 当前主题
+ * @param {Function} props.onShowLogs - 显示日志按钮点击回调
  */
-function Header({ onExport, onThemeChange, currentTheme }) {
+function Header({ onExport, onThemeChange, currentTheme, onShowLogs }) {
   const themes = getAvailableThemes();
   
   // 处理主题变更
@@ -43,6 +44,16 @@ function Header({ onExport, onThemeChange, currentTheme }) {
         <button className="export-button" onClick={onExport}>
           导出
         </button>
+        
+        {onShowLogs && (
+          <button 
+            className="logs-button" 
+            onClick={onShowLogs}
+            title="查看日志"
+          >
+            日志
+          </button>
+        )}
       </div>
     </header>
   );

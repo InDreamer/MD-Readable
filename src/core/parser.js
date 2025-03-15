@@ -1,6 +1,7 @@
 import { marked } from 'marked';
 import hljs from 'highlight.js';
 import katex from 'katex';
+import logger from '../utils/logger';
 
 // 配置marked选项
 marked.setOptions({
@@ -9,6 +10,7 @@ marked.setOptions({
     try {
       return hljs.highlight(code, { language: lang }).value;
     } catch (e) {
+      logger.warn(`代码高亮失败，语言: ${lang}`, e);
       return hljs.highlightAuto(code).value;
     }
   },
@@ -32,7 +34,7 @@ renderer.paragraph = (text) => {
     try {
       return katex.renderToString(formula, { throwOnError: false, displayMode: false });
     } catch (e) {
-      console.error('KaTeX渲染错误:', e);
+      logger.error('KaTeX行内公式渲染错误:', e);
       return match;
     }
   });
@@ -46,7 +48,7 @@ renderer.code = (code, language) => {
     try {
       return `<div class="math-block">${katex.renderToString(code, { throwOnError: false, displayMode: true })}</div>`;
     } catch (e) {
-      console.error('KaTeX渲染错误:', e);
+      logger.error('KaTeX块级公式渲染错误:', e);
       return `<pre>数学公式渲染错误: ${e.message}</pre>`;
     }
   }
@@ -61,12 +63,15 @@ renderer.code = (code, language) => {
 export function parseMarkdown(markdown) {
   if (!markdown) return '';
   
+  logger.debug('开始解析Markdown', { length: markdown.length });
   marked.use({ renderer });
   
   try {
-    return marked(markdown);
+    const result = marked(markdown);
+    logger.debug('Markdown解析完成', { outputLength: result.length });
+    return result;
   } catch (error) {
-    console.error('Markdown解析错误:', error);
+    logger.error('Markdown解析错误:', error);
     return `<div class="error">Markdown解析错误: ${error.message}</div>`;
   }
 }
@@ -78,6 +83,8 @@ export function parseMarkdown(markdown) {
  */
 export function parseMarkdownWithMeta(markdown) {
   if (!markdown) return { html: '', meta: {} };
+  
+  logger.debug('开始解析带元数据的Markdown');
   
   // 简单的元数据提取，格式为 ---key: value---
   const metaRegex = /^---\s*([\s\S]*?)\s*---/;
@@ -97,6 +104,10 @@ export function parseMarkdownWithMeta(markdown) {
         meta[key.trim()] = valueParts.join(':').trim();
       }
     });
+    
+    logger.debug('元数据解析完成', { metaKeys: Object.keys(meta) });
+  } else {
+    logger.debug('未找到元数据');
   }
   
   return {
