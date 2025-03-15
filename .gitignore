@@ -1,0 +1,8 @@
+# Ignore .specstory
+.specstory/
+
+# Ignore .idea
+.idea/
+
+# Ignore .vscode
+.vscode/
