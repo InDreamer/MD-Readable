@@ -1,5 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { applyTheme } from '../core/renderer';
+import ScrollButtons from './ScrollButtons';
+import logger from '../utils/logger';
 import '../styles/Preview.css';
 
 /**
@@ -10,10 +12,12 @@ import '../styles/Preview.css';
  */
 function Preview({ html, theme }) {
   const previewRef = useRef(null);
+  const previewContentId = 'preview-content';
   
   // 应用主题和渲染HTML
   useEffect(() => {
     if (previewRef.current) {
+      logger.debug('更新预览内容', { theme });
       const themedHtml = applyTheme(html, theme);
       previewRef.current.innerHTML = themedHtml;
       
@@ -33,7 +37,12 @@ function Preview({ html, theme }) {
       <div className="preview-header">
         <h3>预览</h3>
       </div>
-      <div className="preview-content" ref={previewRef}></div>
+      <div 
+        className="preview-content" 
+        ref={previewRef} 
+        id={previewContentId}
+      ></div>
+      <ScrollButtons targetId={previewContentId} />
     </div>
   );
 }

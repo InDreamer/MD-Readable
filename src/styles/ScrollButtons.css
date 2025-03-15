@@ -1,0 +1,114 @@
+.scroll-buttons {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 100;
+}
+
+.scroll-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.scroll-button:hover {
+  background-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.scroll-button:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.scroll-button svg {
+  fill: #555;
+}
+
+.scroll-button:hover svg {
+  fill: #333;
+}
+
+/* 暗色主题适配 */
+@media (prefers-color-scheme: dark) {
+  .scroll-button {
+    background-color: rgba(50, 50, 50, 0.8);
+    border-color: #444;
+  }
+  
+  .scroll-button:hover {
+    background-color: rgba(60, 60, 60, 0.95);
+  }
+  
+  .scroll-button svg {
+    fill: #ccc;
+  }
+  
+  .scroll-button:hover svg {
+    fill: #fff;
+  }
+}
+
+/* 主题适配 */
+.theme-dark .scroll-button {
+  background-color: rgba(50, 50, 50, 0.8);
+  border-color: #444;
+}
+
+.theme-dark .scroll-button:hover {
+  background-color: rgba(60, 60, 60, 0.95);
+}
+
+.theme-dark .scroll-button svg {
+  fill: #ccc;
+}
+
+.theme-dark .scroll-button:hover svg {
+  fill: #fff;
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.scroll-buttons {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .scroll-buttons {
+    right: 10px;
+    bottom: 10px;
+  }
+  
+  .scroll-button {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .scroll-button svg {
+    width: 20px;
+    height: 20px;
+  }
+}

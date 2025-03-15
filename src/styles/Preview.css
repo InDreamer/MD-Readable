@@ -7,6 +7,7 @@
   background-color: var(--preview-bg, #fff);
   border: 1px solid var(--border-color, #ddd);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
 .preview-header {
@@ -27,11 +28,42 @@
   padding: 0;
   overflow-y: auto;
   min-height: 300px;
+  position: relative;
 }
 
-/* 响应式布局 */
+.preview-container .scroll-buttons {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  z-index: 10;
+}
+
+.theme-dark .preview-container {
+  background-color: var(--dark-bg, #1e1e1e);
+  border-color: var(--dark-border, #444);
+}
+
+.theme-dark .preview-header {
+  background-color: var(--dark-bg, #1e1e1e);
+  border-color: var(--dark-border, #444);
+}
+
+.theme-dark .preview-header h3 {
+  color: var(--dark-text, #e6e6e6);
+}
+
 @media (max-width: 768px) {
   .preview-container {
     min-height: 300px;
   }
-} 
+  
+  .preview-container .scroll-buttons {
+    right: 10px;
+    bottom: 10px;
+  }
+  
+  .preview-container .scroll-button {
+    width: 36px;
+    height: 36px;
+  }
+}
