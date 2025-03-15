@@ -57,7 +57,7 @@ describe('数学公式渲染测试', () => {
     });
     
     // 修复XMLSerializer模拟
-    jest.spyOn(global, 'XMLSerializer').mockImplementation(() => ({
+    global.XMLSerializer = jest.fn().mockImplementation(() => ({
       serializeToString: jest.fn(() => '<svg>mock svg content</svg>')
     }));
   });
@@ -133,7 +133,7 @@ describe('数学公式渲染测试', () => {
     // 验证HTML内容
     expect(capturedHtml).toContain('MathJax-script');
     expect(capturedHtml).toContain('tex-mml-chtml.js');
-    expect(capturedHtml).toContain('inlineMath: [[\'$\', \'$\'], [\'\\\\\\\\(\'');
+    expect(capturedHtml).toContain("inlineMath: [['$', '$'], ['\\\\(', '\\\\)']],");
     expect(capturedHtml).toContain('$E=mc^2$');
   });
 }); 

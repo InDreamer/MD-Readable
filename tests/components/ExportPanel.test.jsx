@@ -142,18 +142,6 @@ describe('ExportPanel组件测试', () => {
     });
   });
   
-  test('导出失败应该显示错误信息', async () => {
-    exportToPDF.mockImplementationOnce(() => Promise.reject(new Error('导出失败')));
-    
-    render(<ExportPanel {...mockProps} />);
-    
-    fireEvent.click(screen.getByText('导出'));
-    
-    await waitFor(() => {
-      expect(screen.getByText('导出失败: 导出失败')).toBeInTheDocument();
-    });
-  });
-  
   test('导出过程中应该禁用按钮和输入框', async () => {
     // 模拟一个延迟的导出函数
     exportToPDF.mockImplementationOnce(() => new Promise(resolve => {
@@ -178,6 +166,26 @@ describe('ExportPanel组件测试', () => {
     // 等待导出完成
     await waitFor(() => {
       expect(screen.getByText('导出')).toBeInTheDocument();
+    });
+    
+    // 检查导出完成后的状态
+    expect(screen.getByLabelText('导出格式:')).not.toBeDisabled();
+    expect(screen.getByLabelText('文件名:')).not.toBeDisabled();
+    expect(screen.getByText('导出')).not.toBeDisabled();
+  });
+  
+  // 添加错误处理测试
+  test('导出失败时应该显示错误信息', async () => {
+    // 模拟导出失败
+    exportToPDF.mockImplementationOnce(() => Promise.reject(new Error('导出失败')));
+    
+    render(<ExportPanel {...mockProps} />);
+    
+    fireEvent.click(screen.getByText('导出'));
+    
+    // 等待错误信息显示
+    await waitFor(() => {
+      expect(screen.getByText('导出失败: 导出失败')).toBeInTheDocument();
     });
     
     // 检查导出完成后的状态
