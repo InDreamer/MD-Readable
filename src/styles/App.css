@@ -1,0 +1,71 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  transition: background-color 0.3s ease;
+}
+
+.main-content {
+  display: flex;
+  flex: 1;
+  padding: 20px;
+  gap: 20px;
+  height: calc(100vh - 60px);
+}
+
+/* 主题样式 */
+.theme-default {
+  --bg-color: #f5f5f5;
+  --text-color: #333;
+  --border-color: #ddd;
+  --header-bg: #fff;
+  --editor-bg: #fff;
+  --preview-bg: #fff;
+  --button-primary: #0366d6;
+  --button-primary-hover: #0256b9;
+  --button-text: #fff;
+}
+
+.theme-dark {
+  --bg-color: #1e1e1e;
+  --text-color: #e6e6e6;
+  --border-color: #444;
+  --header-bg: #252525;
+  --editor-bg: #2d2d2d;
+  --preview-bg: #2d2d2d;
+  --button-primary: #58a6ff;
+  --button-primary-hover: #79b6ff;
+  --button-text: #fff;
+}
+
+.theme-paper {
+  --bg-color: #fff9f0;
+  --text-color: #333;
+  --border-color: #e0d6cc;
+  --header-bg: #fff9f0;
+  --editor-bg: #fffcf7;
+  --preview-bg: #fffcf7;
+  --button-primary: #d35400;
+  --button-primary-hover: #e67e22;
+  --button-text: #fff;
+}
+
+.theme-minimal {
+  --bg-color: #fff;
+  --text-color: #333;
+  --border-color: #e5e7eb;
+  --header-bg: #fff;
+  --editor-bg: #fff;
+  --preview-bg: #fff;
+  --button-primary: #2563eb;
+  --button-primary-hover: #1d4ed8;
+  --button-text: #fff;
+}
+
+/* 响应式布局 */
+@media (max-width: 768px) {
+  .main-content {
+    flex-direction: column;
+    height: auto;
+  }
+} 

@@ -1,0 +1,48 @@
+.editor-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  border-radius: 6px;
+  overflow: hidden;
+  background-color: var(--editor-bg, #fff);
+  border: 1px solid var(--border-color, #ddd);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.editor-header {
+  padding: 10px 16px;
+  background-color: var(--editor-bg, #fff);
+  border-bottom: 1px solid var(--border-color, #ddd);
+}
+
+.editor-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-color, #333);
+}
+
+.editor-textarea {
+  flex: 1;
+  padding: 16px;
+  border: none;
+  resize: none;
+  background-color: var(--editor-bg, #fff);
+  color: var(--text-color, #333);
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  min-height: 300px;
+  overflow-y: auto;
+}
+
+.editor-textarea:focus {
+  outline: none;
+}
+
+/* 响应式布局 */
+@media (max-width: 768px) {
+  .editor-container {
+    min-height: 300px;
+  }
+} 

@@ -1,0 +1,126 @@
+.export-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.export-panel-content {
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  background-color: var(--editor-bg, #fff);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.export-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color, #ddd);
+}
+
+.export-panel-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-color, #333);
+}
+
+.close-button {
+  font-size: 1.5rem;
+  color: #888;
+  transition: color 0.2s ease;
+}
+
+.close-button:hover {
+  color: #555;
+}
+
+.export-form {
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color, #ddd);
+}
+
+.form-group {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-weight: 500;
+  color: var(--text-color, #333);
+}
+
+.form-group select,
+.form-group input {
+  padding: 8px 12px;
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 4px;
+  background-color: var(--editor-bg, #fff);
+  color: var(--text-color, #333);
+}
+
+.export-button {
+  padding: 8px 16px;
+  background-color: var(--button-primary, #0366d6);
+  color: var(--button-text, #fff);
+  border-radius: 4px;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.export-button:hover:not(:disabled) {
+  background-color: var(--button-primary-hover, #0256b9);
+}
+
+.export-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.export-preview {
+  padding: 16px;
+  overflow-y: auto;
+  max-height: 400px;
+}
+
+.export-preview h4 {
+  margin: 0 0 12px 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-color, #333);
+}
+
+.preview-container {
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* 响应式布局 */
+@media (max-width: 480px) {
+  .export-panel-content {
+    width: 95%;
+    max-height: 95vh;
+  }
+  
+  .export-preview {
+    max-height: 300px;
+  }
+} 

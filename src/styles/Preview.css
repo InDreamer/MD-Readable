@@ -1,0 +1,37 @@
+.preview-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  border-radius: 6px;
+  overflow: hidden;
+  background-color: var(--preview-bg, #fff);
+  border: 1px solid var(--border-color, #ddd);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.preview-header {
+  padding: 10px 16px;
+  background-color: var(--preview-bg, #fff);
+  border-bottom: 1px solid var(--border-color, #ddd);
+}
+
+.preview-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-color, #333);
+}
+
+.preview-content {
+  flex: 1;
+  padding: 0;
+  overflow-y: auto;
+  min-height: 300px;
+}
+
+/* 响应式布局 */
+@media (max-width: 768px) {
+  .preview-container {
+    min-height: 300px;
+  }
+} 
