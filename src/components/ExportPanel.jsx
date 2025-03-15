@@ -51,11 +51,51 @@ function ExportPanel({ markdown, html, onClose }) {
           fullFilename = `${filename}.svg`;
           break;
         case 'md':
-          data = `data:text/markdown;charset=utf-8,${encodeURIComponent(markdown)}`;
+          // 使用Blob对象创建Markdown文件，确保正确的字符编码
+          data = new Blob([markdown], { type: 'text/markdown;charset=utf-8' });
           fullFilename = `${filename}.md`;
           break;
         case 'html':
-          data = `data:text/html;charset=utf-8,${encodeURIComponent(html)}`;
+          // 使用Blob对象创建HTML文件，确保正确的字符编码
+          const htmlContent = `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${filename}</title>
+  <!-- 添加MathJax支持 -->
+  <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\\\(', '\\\\)']],
+        displayMath: [['$$', '$$'], ['\\\\[', '\\\\]']],
+        processEscapes: true
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <style>
+    /* 可以在这里添加基本样式 */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    /* 可以从应用中复制其他必要的样式 */
+  </style>
+</head>
+<body>
+  ${html}
+</body>
+</html>`;
+          data = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
           fullFilename = `${filename}.html`;
           break;
         default:
